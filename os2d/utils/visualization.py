@@ -228,7 +228,8 @@ def get_image_from_dataloader(image_id, dataloader):
 def show_annotated_image(img, boxes, labels, scores, class_ids, score_threshold=0.0,
                          default_boxes=None, transform_corners=None,
                          max_dets=None, showfig=False, image_id=None):
-    good_ids = torch.nonzero(scores.float() > score_threshold).view(-1)
+    # good_ids = torch.nonzero(scores.float() > score_threshold).view(-1)
+    good_ids = torch.argmax(scores).view(-1)
     if good_ids.numel() > 0:
         if max_dets is not None:
                 _, ids = scores[good_ids].sort(descending=False)
@@ -340,7 +341,7 @@ def vis_image(img, boxes=None, label_names=None, scores=None, colors=None, image
                         style='italic',
                         fontsize=8,
                         bbox={'facecolor': 'white', 'alpha': 0.7, 'pad': 2})
-
+            # break
     # plot polygons in x1, y1, x2, y2, x3, y3, x4, y4 format
     if polygons is not None:
         for i, polygon in enumerate(polygons):
