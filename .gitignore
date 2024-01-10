@@ -9,3 +9,4 @@ data/paste
 data/instre
 baselines/CoAE/data
 .idea/
+test_res/

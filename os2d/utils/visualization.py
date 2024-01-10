@@ -178,7 +178,7 @@ def show_detection_from_dataloader(boxes, image_id, dataloader, cfg_visualizatio
 
 def show_detections(boxes, image_to_show,
                     cfg_visualization,
-                    class_ids=None, image_id=None):
+                    class_ids=None, image_id=None,savefig=""):
     labels = boxes.get_field("labels").clone()
     scores = boxes.get_field("scores").clone()
 
@@ -195,11 +195,12 @@ def show_detections(boxes, image_to_show,
                                class_ids=class_ids,
                                score_threshold=cfg_visualization.score_threshold,
                                max_dets=cfg_visualization.max_detections,
-                               showfig=True,
-                               image_id=image_id)
+                               showfig=False,
+                               image_id=image_id,
+                               savefig=savefig)
 
 
-def show_gt_boxes(image_id, gt_boxes, class_ids, dataloader, image_to_show=None):
+def show_gt_boxes(image_id, gt_boxes, class_ids, dataloader, image_to_show=None,savefig=""):
     print("Showing all GT boxes for image {0}, dataset {1}".format(image_id, dataloader.get_name()))
     gt_labels = gt_boxes.get_field("labels")
     score_for_viz = gt_labels.clone()
@@ -216,7 +217,9 @@ def show_gt_boxes(image_id, gt_boxes, class_ids, dataloader, image_to_show=None)
                          labels=gt_labels,
                          class_ids=class_ids,
                          score_threshold=float("-inf"),
-                         showfig=True)
+                         showfig=True,
+                         savefig=savefig
+                         )
 
 
 def get_image_from_dataloader(image_id, dataloader):
@@ -227,7 +230,7 @@ def get_image_from_dataloader(image_id, dataloader):
 
 def show_annotated_image(img, boxes, labels, scores, class_ids, score_threshold=0.0,
                          default_boxes=None, transform_corners=None,
-                         max_dets=None, showfig=False, image_id=None):
+                         max_dets=None, showfig=False, image_id=None,savefig=""):
     # good_ids = torch.nonzero(scores.float() > score_threshold).view(-1)
     good_ids = torch.argmax(scores).view(-1)
     if good_ids.numel() > 0:
@@ -270,12 +273,13 @@ def show_annotated_image(img, boxes, labels, scores, class_ids, score_threshold=
               label_names=label_names,
               colors=box_colors,
               image_id=image_id,
-              polygons=transform_corners
+              polygons=transform_corners,
+              savefig=savefig
               )
     return
 
 
-def vis_image(img, boxes=None, label_names=None, scores=None, colors=None, image_id=None, polygons=None,showfig=False):
+def vis_image(img, boxes=None, label_names=None, scores=None, colors=None, image_id=None, polygons=None,showfig=False,savefig=""):
     """Visualize a color image.
 
     Args:
@@ -361,5 +365,6 @@ def vis_image(img, boxes=None, label_names=None, scores=None, colors=None, image
     # Show
     if showfig:
         plt.show()
-
+    if savefig:
+        fig.savefig(savefig,bbox_inches='tight')
     return fig
